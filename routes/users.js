@@ -19,6 +19,18 @@ router.get("/", async function (req, res, next) {
     cartCount = await userHelper.getCartCount(userId);
   }
   userHelper.getAllProducts().then((products) => {
+    res.render("users/signin", { admin: false, products, user, cartCount });
+  });
+});
+
+router.get("/bills", async function (req, res, next) {
+  let user = req.session.user;
+  let cartCount = null;
+  if (user) {
+    let userId = req.session.user._id;
+    cartCount = await userHelper.getCartCount(userId);
+  }
+  userHelper.getAllProducts().then((products) => {
     res.render("users/home", { admin: false, products, user, cartCount });
   });
 });
@@ -35,13 +47,13 @@ router.post("/signup", function (req, res) {
   userHelper.doSignup(req.body).then((response) => {
     req.session.signedIn = true;
     req.session.user = response;
-    res.redirect("/");
+    res.redirect("users/index");
   });
 });
 
 router.get("/signin", function (req, res) {
   if (req.session.signedIn) {
-    res.redirect("/");
+    res.redirect("users/index");
   } else {
     res.render("users/signin", {
       admin: false,
@@ -56,7 +68,7 @@ router.post("/signin", function (req, res) {
     if (response.status) {
       req.session.signedIn = true;
       req.session.user = response.user;
-      res.redirect("/");
+      res.redirect("/index");
     } else {
       req.session.signInErr = "Invalid Email/Password";
       res.redirect("/signin");

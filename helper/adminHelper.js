@@ -27,6 +27,29 @@ module.exports = {
     });
   },
 
+  // addBill: (bill, callback) => {
+  //   console.log(bill);
+  //   bill.Price = parseInt(bill.Price);
+  //   db.get()
+  //     .collection(collections.B)
+  //     .insertOne(bill)
+  //     .then((data) => {
+  //       console.log(data);
+  //       callback(data.ops[0]._id);
+  //     });
+  // },
+
+  // getAllProducts: () => {
+  //   return new Promise(async (resolve, reject) => {
+  //     let products = await db
+  //       .get()
+  //       .collection(collections.PRODUCTS_COLLECTION)
+  //       .find()
+  //       .toArray();
+  //     resolve(products);
+  //   });
+  // },
+
   doSignup: (adminData) => {
     return new Promise(async (resolve, reject) => {
       if (adminData.Code == "admin123") {
@@ -213,7 +236,8 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
       db.get()
         .collection(collections.PRODUCTS_COLLECTION)
-        .createIndex({ Name : "text" }).then(async()=>{
+        .createIndex({ Name: "text" })
+        .then(async () => {
           let result = await db
             .get()
             .collection(collections.PRODUCTS_COLLECTION)
@@ -224,8 +248,7 @@ module.exports = {
             })
             .toArray();
           resolve(result);
-        })
-
+        });
     });
   },
 };

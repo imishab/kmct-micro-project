@@ -356,8 +356,6 @@ module.exports = {
     });
   },
 
-
-
   changePaymentStatus: (orderId) => {
     return new Promise((resolve, reject) => {
       db.get()
