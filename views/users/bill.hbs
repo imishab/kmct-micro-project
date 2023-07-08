@@ -23,12 +23,14 @@
                     <div class="card single-product-card">
                         <div class="card-body p-3">
                             <!-- Product Title--><a class="product-title d-block text-truncate"
-                                href="page-shop-details.html">{{this.Name}}</a>
+                                href="#!">{{this.Name}}</a>
                             <!-- Product Price-->
                             <p class="sale-price" style="margin-bottom: 4px;">{{this.Price}}/-
                             <p>Avail Stock : {{this.Quantity}}</p>
                             </p>
-                            <button class="btn btn-primary btn-sm" onclick="addToCart('{{this._id}}')">Add to
+                            <button class="add-to-cart-btn btn btn-primary btn-sm"
+                                onclick="addToCart('{{this._id}}')">Add
+                                to
                                 Bag</button>
                         </div>
                     </div>
@@ -54,6 +56,40 @@
     </div>
 </div>
 
+
+<script>
+    // Get all the "Add to Cart" buttons
+    const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+
+    // Add a click event listener to each button
+    addToCartButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            // Change the button color
+            button.classList.add('added');
+
+            // Change the button text
+            button.textContent = 'Item added!';
+            button.style.backgroundColor = "#2ecc4a";
+            button.style.border = "0px";
+
+
+            const svgIcon = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2" viewBox="0 0 16 16">
+            <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+            </svg> `;
+
+            // Add a class to show the "Added!" text
+            const addedText = document.createElement('span');
+            addedText.classList.add('added-text');
+            button.insertAdjacentHTML('afterbegin', svgIcon);
+            button.appendChild(addedText);
+
+            // Disable the button to prevent multiple clicks
+            button.disabled = true;
+        });
+    });
+
+</script>
 <script>
     function addToCart(productId) {
         $.ajax({
