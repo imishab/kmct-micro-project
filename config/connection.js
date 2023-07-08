@@ -7,7 +7,7 @@ const state = {
 module.exports.connect = function (done) {
   const url =
     "mongodb+srv://microksb:microksb001@micro.56xfqzb.mongodb.net/?retryWrites=true&w=majority";
-  const dbname = "shop";
+  const dbname = "shopping";
 
   mongoClient.connect(url, { useUnifiedTopology: true }, (err, data) => {
     if (err) {

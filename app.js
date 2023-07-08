@@ -27,6 +27,18 @@ app.engine(
         index++;
         return index;
       },
+      getDay: function (date) {
+        console.log(date);
+        return date.split("|")[0];
+      },
+      getDate: function (date) {
+        if (!date) return "Invalid";
+        return date.split("|")[1];
+      },
+      getTime: function (date) {
+        if (!date) return "Invalid";
+        return date.split("|")[2];
+      },
     },
   })
 );

@@ -1,26 +1,33 @@
-<div class="row mx-auto">
-    <div class="col-md-6 mx-auto">
-        <div class="container mt-5">
-            <h2 class="text-center">Sign In</h2>
-            <form action="/signin" method="POST">
-                {{#if signInErr}}
-                    <div class="alert alert-danger" role="alert">
-                        <p class="error alert-heading">{{signInErr}}</p>
-                    </div>
-                {{/if}}
-                <div class="form-group mt-4">
-                    <label>Email address</label>
-                    <input type="email" class="form-control" name="Email" placeholder="Enter Email">
+<div class="login-wrapper d-flex align-items-center justify-content-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-9 col-md-7 col-lg-6 col-xl-5">
+                <div class="text-center px-4"><img class="login-intro-img" src="img/bg-img/36.png" alt=""></div>
+
+                <!-- Register Form-->
+                <div class="register-form mt-4 px-4">
+                    <h6 class="mb-3 text-center">Log in to continue to Frushop.</h6>
+                    <form action="/signin" method="POST">
+                        {{#if signInErr}}
+                        <div class="alert alert-danger" role="alert">
+                            <p class="error alert-heading">{{signInErr}}</p>
+                        </div>
+                        {{/if}}
+                        <div class="form-group">
+                            <input class="form-control" type="email" name="Email" placeholder="Your Email">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control" type="password" name="Password" placeholder="Enter Password">
+                        </div>
+                        <button class="btn btn-dark w-100" type="submit">Sign In</button>
+                    </form>
                 </div>
-                <div class="form-group mt-4">
-                    <label>Password</label>
-                    <input type="password" class="form-control" name="Password" placeholder="Password">
+                <!-- Login Meta-->
+                <div class="login-meta-data text-center mt-3">
+                    <p class="mb-0">Didn't have an account? <a class="stretched-link" href="/signup">Register
+                            Now</a></p>
                 </div>
-                <div class="row">
-                    <a href="/signup" class="mt-4">Create a New Account ?</a>
-                    <button type="submit" class="btn btn-primary mt-2">Sign Up</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>

@@ -2,6 +2,7 @@ var express = require("express");
 var userHelper = require("../helper/userHelper");
 var router = express.Router();
 
+//////////////////AUTH CHECKER//////////////////
 const verifySignedIn = (req, res, next) => {
   if (req.session.signedIn) {
     next();
@@ -10,8 +11,55 @@ const verifySignedIn = (req, res, next) => {
   }
 };
 
-/* GET home page. */
-router.get("/", async function (req, res, next) {
+//////////////////ROOT PAGE ROUTER//////////////////
+router.get("/", verifySignedIn, function (req, res) {
+  let user = req.session.user;
+  userHelper.getAllProducts().then((products) => {
+    res.render("users/home", { admin: false, products, user });
+  });
+});
+
+//////////////////HOME PAGE ROUTER//////////////////
+router.get("/home", verifySignedIn, function (req, res) {
+  let user = req.session.user;
+  userHelper.getAllProducts().then((products) => {
+    res.render("users/home", { admin: false, products, user });
+  });
+});
+
+//////////////////STOCK PAGE ROUTER//////////////////
+router.get("/stock", verifySignedIn, function (req, res) {
+  let user = req.session.user;
+  userHelper.getAllProducts().then((products) => {
+    res.render("users/stock", { admin: false, products, user });
+  });
+});
+
+//////////////////ADD STOCK PAGE ROUTER//////////////////
+router.get("/add-stock", verifySignedIn, function (req, res) {
+  let user = req.session.user;
+  userHelper.getAllProducts().then((products) => {
+    res.render("users/add-stock", { admin: false, products, user });
+  });
+});
+
+//////////////////ADD STOCK FUNCTION//////////////////
+router.post("/add-stock", function (req, res) {
+  userHelper.addProduct(req.body, (id) => {
+    res.redirect("/stock");
+  });
+});
+
+//////////////////DELETE STOCK FUNCTION//////////////////
+router.get("/delete-stock/:id", verifySignedIn, function (req, res) {
+  let productId = req.params.id;
+  userHelper.deleteProduct(productId).then((response) => {
+    res.redirect("/stock");
+  });
+});
+
+//////////////////BILL PAGE ROUTER//////////////////
+router.get("/bill", async function (req, res, next) {
   let user = req.session.user;
   let cartCount = null;
   if (user) {
@@ -19,43 +67,35 @@ router.get("/", async function (req, res, next) {
     cartCount = await userHelper.getCartCount(userId);
   }
   userHelper.getAllProducts().then((products) => {
-    res.render("users/signin", { admin: false, products, user, cartCount });
+    res.render("users/bill", { admin: false, products, user, cartCount });
   });
 });
 
-router.get("/bills", async function (req, res, next) {
-  let user = req.session.user;
-  let cartCount = null;
-  if (user) {
-    let userId = req.session.user._id;
-    cartCount = await userHelper.getCartCount(userId);
-  }
-  userHelper.getAllProducts().then((products) => {
-    res.render("users/home", { admin: false, products, user, cartCount });
-  });
-});
-
+//////////////////SIGNUP PAGE ROUTER//////////////////
 router.get("/signup", function (req, res) {
   if (req.session.signedIn) {
-    res.redirect("/");
+    res.redirect("/home");
   } else {
-    res.render("users/signup", { admin: false });
+    res.render("users/signup", { admin: false, layout: "authlayout" });
   }
 });
 
+//////////////////SIGNUP PAGE FUNCTION//////////////////
 router.post("/signup", function (req, res) {
   userHelper.doSignup(req.body).then((response) => {
     req.session.signedIn = true;
     req.session.user = response;
-    res.redirect("users/index");
+    res.redirect("/home");
   });
 });
 
+//////////////////SIGNIN PAGE ROUTER//////////////////
 router.get("/signin", function (req, res) {
   if (req.session.signedIn) {
-    res.redirect("users/index");
+    res.redirect("/home");
   } else {
     res.render("users/signin", {
+      layout: "authlayout",
       admin: false,
       signInErr: req.session.signInErr,
     });
@@ -63,12 +103,13 @@ router.get("/signin", function (req, res) {
   }
 });
 
+//////////////////SIGNIN PAGE FUNCTION//////////////////
 router.post("/signin", function (req, res) {
   userHelper.doSignin(req.body).then((response) => {
     if (response.status) {
       req.session.signedIn = true;
       req.session.user = response.user;
-      res.redirect("/index");
+      res.redirect("/home");
     } else {
       req.session.signInErr = "Invalid Email/Password";
       res.redirect("/signin");
@@ -76,6 +117,7 @@ router.post("/signin", function (req, res) {
   });
 });
 
+//////////////////SIGNOUT FUNCTION//////////////////
 router.get("/signout", function (req, res) {
   req.session.signedIn = false;
   req.session.user = null;
@@ -184,10 +226,13 @@ router.get(
     let userId = req.session.user._id;
     let cartCount = await userHelper.getCartCount(userId);
     let orderId = req.params.id;
+    const order = await userHelper.getOrderById(orderId);
     let products = await userHelper.getOrderProducts(orderId);
     res.render("users/order-products", {
+      layout: "layout2",
       admin: false,
       user,
+      order,
       cartCount,
       products,
     });

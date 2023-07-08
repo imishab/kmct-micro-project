@@ -1,9 +1,35 @@
 var db = require("../config/connection");
 var collections = require("../config/collections");
 const bcrypt = require("bcrypt");
+const moment = require("moment");
+
 const objectId = require("mongodb").ObjectID;
 
 module.exports = {
+  addProduct: (product, callback) => {
+    console.log(product);
+    product.Price = parseInt(product.Price);
+    db.get()
+      .collection(collections.PRODUCTS_COLLECTION)
+      .insertOne(product)
+      .then((data) => {
+        console.log(data);
+        callback(data.ops[0]._id);
+      });
+  },
+
+  deleteProduct: (productId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.PRODUCTS_COLLECTION)
+        .removeOne({ _id: objectId(productId) })
+        .then((response) => {
+          console.log(response);
+          resolve(response);
+        });
+    });
+  },
+
   getAllProducts: () => {
     return new Promise(async (resolve, reject) => {
       let products = await db
@@ -279,11 +305,10 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
       console.log(order, products, total);
       let status = order["payment-method"] === "COD" ? "placed" : "pending";
+      const today = moment();
       let orderObject = {
         deliveryDetails: {
-          mobile: order.mobile,
-          address: order.address,
-          pincode: order.pincode,
+          name: order.name,
         },
         userId: objectId(order.userId),
         user: user,
@@ -291,7 +316,8 @@ module.exports = {
         products: products,
         totalAmount: total,
         status: status,
-        date: new Date(),
+        date: today.utcOffset("+05:30").format("dddd | DD/MM/ YYYY | LT"),
+        createdAt: new Date(),
       };
       db.get()
         .collection(collections.ORDER_COLLECTION)
@@ -311,9 +337,20 @@ module.exports = {
         .get()
         .collection(collections.ORDER_COLLECTION)
         .find({ "orderObject.userId": objectId(userId) })
+        .sort({ createdAt: -1 })
         .toArray();
       // console.log(orders);
       resolve(orders);
+    });
+  },
+
+  getOrderById: (orderId) => {
+    return new Promise(async (resolve, reject) => {
+      let order = await db
+        .get()
+        .collection(collections.ORDER_COLLECTION)
+        .findOne({ _id: objectId(orderId) });
+      resolve(order);
     });
   },
 
