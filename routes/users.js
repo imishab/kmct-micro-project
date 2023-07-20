@@ -15,7 +15,7 @@ const verifySignedIn = (req, res, next) => {
 router.get("/", verifySignedIn, function (req, res) {
   let user = req.session.user;
   userHelper.getAllProducts().then((products) => {
-    res.render("users/home", { admin: false, products, user });
+    res.render("users/home", { products, user });
   });
 });
 
@@ -23,7 +23,7 @@ router.get("/", verifySignedIn, function (req, res) {
 router.get("/home", verifySignedIn, function (req, res) {
   let user = req.session.user;
   userHelper.getAllProducts().then((products) => {
-    res.render("users/home", { admin: false, products, user });
+    res.render("users/home", { products, user });
   });
 });
 
@@ -31,7 +31,7 @@ router.get("/home", verifySignedIn, function (req, res) {
 router.get("/stock", verifySignedIn, function (req, res) {
   let user = req.session.user;
   userHelper.getAllProducts().then((products) => {
-    res.render("users/stock", { admin: false, products, user });
+    res.render("users/stock", { products, user });
   });
 });
 
@@ -39,7 +39,7 @@ router.get("/stock", verifySignedIn, function (req, res) {
 router.get("/add-stock", verifySignedIn, function (req, res) {
   let user = req.session.user;
   userHelper.getAllProducts().then((products) => {
-    res.render("users/add-stock", { admin: false, products, user });
+    res.render("users/add-stock", { products, user });
   });
 });
 
@@ -67,7 +67,7 @@ router.get("/bill", async function (req, res, next) {
     cartCount = await userHelper.getCartCount(userId);
   }
   userHelper.getAllProducts().then((products) => {
-    res.render("users/bill", { admin: false, products, user, cartCount });
+    res.render("users/bill", { products, user, cartCount });
   });
 });
 
@@ -76,7 +76,7 @@ router.get("/signup", function (req, res) {
   if (req.session.signedIn) {
     res.redirect("/home");
   } else {
-    res.render("users/signup", { admin: false, layout: "authlayout" });
+    res.render("users/signup", { layout: "authlayout" });
   }
 });
 
@@ -96,7 +96,7 @@ router.get("/signin", function (req, res) {
   } else {
     res.render("users/signin", {
       layout: "authlayout",
-      admin: false,
+      
       signInErr: req.session.signInErr,
     });
     req.session.signInErr = null;
@@ -134,7 +134,7 @@ router.get("/cart", verifySignedIn, async function (req, res) {
     total = await userHelper.getTotalAmount(userId);
   }
   res.render("users/cart", {
-    admin: false,
+    
     user,
     cartCount,
     cartProducts,
@@ -169,7 +169,7 @@ router.get("/place-order", verifySignedIn, async (req, res) => {
   let userId = req.session.user._id;
   let cartCount = await userHelper.getCartCount(userId);
   let total = await userHelper.getTotalAmount(userId);
-  res.render("users/place-order", { admin: false, user, cartCount, total });
+  res.render("users/place-order", { user, cartCount, total });
 });
 
 router.post("/place-order", async (req, res) => {
@@ -207,7 +207,7 @@ router.get("/order-placed", verifySignedIn, async (req, res) => {
   let user = req.session.user;
   let userId = req.session.user._id;
   let cartCount = await userHelper.getCartCount(userId);
-  res.render("users/order-placed", { admin: false, user, cartCount });
+  res.render("users/order-placed", { user, cartCount });
 });
 
 router.get("/orders", verifySignedIn, async function (req, res) {
@@ -215,7 +215,7 @@ router.get("/orders", verifySignedIn, async function (req, res) {
   let userId = req.session.user._id;
   let cartCount = await userHelper.getCartCount(userId);
   let orders = await userHelper.getUserOrder(userId);
-  res.render("users/orders", { admin: false, user, cartCount, orders });
+  res.render("users/orders", { user, cartCount, orders });
 });
 
 router.get(
@@ -230,7 +230,7 @@ router.get(
     let products = await userHelper.getOrderProducts(orderId);
     res.render("users/order-products", {
       layout: "layout2",
-      admin: false,
+      
       user,
       order,
       cartCount,
@@ -252,7 +252,7 @@ router.post("/search", verifySignedIn, async function (req, res) {
   let cartCount = await userHelper.getCartCount(userId);
   userHelper.searchProduct(req.body).then((response) => {
     res.render("users/search-result", {
-      admin: false,
+      
       user,
       cartCount,
       response,

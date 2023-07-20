@@ -5,7 +5,6 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var hbs = require("express-handlebars");
 var usersRouter = require("./routes/users");
-var adminRouter = require("./routes/admin");
 var fileUpload = require("express-fileupload");
 var db = require("./config/connection");
 var session = require("express-session");
@@ -54,7 +53,6 @@ db.connect((err) => {
   else console.log("Database Connected Successfully");
 });
 app.use("/", usersRouter);
-app.use("/admin", adminRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
